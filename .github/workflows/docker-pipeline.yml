@@ -3,7 +3,7 @@ name: Docker Pipeline
 on:
   push:
     branches:
-      - lab_docker
+      - LAB2
       
 jobs:
   build_and_publish:
