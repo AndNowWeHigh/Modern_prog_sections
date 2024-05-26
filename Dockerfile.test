@@ -1,0 +1,13 @@
+FROM python:3.12
+
+WORKDIR /Lab2
+
+ADD app/lab_1.py .
+ADD app/lab_1_2.py .
+ADD test/test_lab_1.py .
+ADD test/test_lab_1_2.py .
+
+
+RUN pip install psutil
+
+CMD ["python", "-m", "unittest", "python test_lab_1.py && python test_lab_1_2.py"]
