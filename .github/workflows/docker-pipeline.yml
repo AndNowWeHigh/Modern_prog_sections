@@ -17,19 +17,19 @@ jobs:
         run: docker login ghcr.io -u ${{  secrets.GH_NAME }} -p ${{ secrets.TOKEN }}
       
       - name: Build Docker image
-        run: docker build . --tag ghcr.io/${{ secrets.DOCKER_NAME }}/modprog-project-ghcr:latest
+        run: docker build . --tag ghcr.io/${{ secrets.DOCKER_NAME }}/${{ github.repository }}:latest
       
       - name: Push Docker image to GitHub Container Registry
-        run: docker push ghcr.io/${{ secrets.DOCKER_NAME }}/modprog-project-ghcr:latest
+        run: docker push ghcr.io/${{ secrets.DOCKER_NAME }}/${{ github.repository }}:latest
 
       - name: Build Docker image (test)
-        run: docker build -t ghcr.io/${{ secrets.DOCKER_NAME }}/modprog-project-test:latest -f Dockerfile.test .
+        run: docker build -t ghcr.io/${{ secrets.DOCKER_NAME }}/${{ github.repository }}:latest -f Dockerfile.test .
 
       - name: Push test Docker image to GitHub Container Registry
-        run: docker push ghcr.io/${{ secrets.DOCKER_NAME }}/modprog-project-test:latest
+        run: docker push ghcr.io/${{ secrets.DOCKER_NAME }}/${{ github.repository }}:latest
 
       - name: Run Docker container
-        run: docker run ghcr.io/${{ secrets.DOCKER_NAME }}/modprog-project-ghcr:latest
+        run: docker run ghcr.io/${{ secrets.DOCKER_NAME }}/${{ github.repository }}:latest
 
       - name: Run tests in Docker container
-        run: docker run ghcr.io/${{ secrets.DOCKER_NAME }}/modprog-project-test:latest
+        run: docker run ghcr.io/${{ secrets.DOCKER_NAME }}/${{ github.repository }}:latest
