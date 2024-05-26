@@ -1,19 +1,11 @@
-# Вказуємо базовий образ з Python 3.11.5
-FROM python:3.11.5-slim
+FROM python:3.12
 
-
-# Встановлюємо робочу директорію всередині контейнера
 WORKDIR .
 
-# Копіюємо файл з вимогами (requirements.txt) у контейнер
-COPY requirements.txt .
+ADD app/lab_1.py .
+ADD app/lab_1_2.py .
 
-# Встановлюємо залежності
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install psutil
 
-# Копіюємо весь вміст поточної директорії у контейнер
-COPY . .
-
-# Вказуємо команду для запуску додатку
-CMD ["sh", "-c", "python test_lab_1.py && python test_lab_1_2.py"]
+CMD ["sh", "-c", "python ./lab_1.py && python ./lab_1_2.py"]
 
