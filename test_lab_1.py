@@ -1,5 +1,5 @@
 import unittest
-from lab_1 import task
+from LAB2.lab_1 import task
 
 class TestTask3(unittest.TestCase):
 
