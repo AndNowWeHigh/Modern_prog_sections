@@ -15,5 +15,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Вказуємо команду для запуску додатку
-CMD ["sh", "-c", "python test_lab_1.py && python test_lab_1_2.py"]
+CMD ["sh", "-c", "python lab_1.py && python test_lab_1_2.py"]
 
