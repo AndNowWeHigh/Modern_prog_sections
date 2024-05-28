@@ -1,6 +1,6 @@
 FROM python:3.12
 
-WORKDIR .
+WORKDIR . /app
 
 ADD app/lab_1.py .
 ADD app/lab_1_2.py .
