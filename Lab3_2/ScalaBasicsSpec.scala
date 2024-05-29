@@ -28,7 +28,7 @@ class ScalaBasicsSpec extends AnyFlatSpec with Matchers {
     assert(modified == 10 && original == 5)
   }
 
-  "Object creation" should "demonstrate heap allocation" in {
+  "Heap allocation" should "increase heap size" in {
     class TestClass(var value: Int)
 
     def createObjectsOnHeap(): Array[TestClass] = {
@@ -37,11 +37,24 @@ class ScalaBasicsSpec extends AnyFlatSpec with Matchers {
 
     val heapSizeBefore = getHeapSize()
     val obj = createObjectsOnHeap()
-    System.gc() // Запит на збір сміття, щоб побачити фактичне використання пам'яті
-    Thread.sleep(1000) // Дайте час GC для запуску
+    System.gc() 
+    Thread.sleep(1000) 
     val heapSizeAfter = getHeapSize()
 
     heapSizeAfter should be > heapSizeBefore
+  }
+
+  "Stack allocation" should "not increase heap size" in {
+    def createObjectOnStack(): Int = {
+      val localVariable = 10
+      localVariable
+    }
+
+    val heapSizeBefore = getHeapSize()
+    val stackAllocatedValue = createObjectOnStack()
+    val heapSizeAfter = getHeapSize()
+
+    assert(stackAllocatedValue == 10 && heapSizeAfter == heapSizeBefore)
   }
 
   "Garbage collector" should "collect unreferenced objects" in {
@@ -55,25 +68,11 @@ class ScalaBasicsSpec extends AnyFlatSpec with Matchers {
     val heapSizeBeforeGC = getHeapSize()
     obj = null
 
-    System.gc()  // Запит на збір сміття
-    Thread.sleep(1000)  // Дайте час GC для запуску
-
+    System.gc() 
+    Thread.sleep(1000)  
     val heapSizeAfterGC = getHeapSize()
 
     heapSizeAfterGC should be < heapSizeBeforeGC
-  }
-
-  "Object creation" should "demonstrate stack allocation" in {
-    def createObjectOnStack(): Int = {
-      val localVariable = 10
-      localVariable
-    }
-
-    val heapSizeBefore = getHeapSize()
-    val stackAllocatedValue = createObjectOnStack()
-    val heapSizeAfter = getHeapSize()
-
-    assert(stackAllocatedValue == 10 && heapSizeAfter == heapSizeBefore)
   }
 
   def getHeapSize(): Long = {
