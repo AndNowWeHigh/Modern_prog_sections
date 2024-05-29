@@ -19,7 +19,8 @@ class ScalaBasicsSpec extends AnyFlatSpec with Matchers {
 
   "Value types" should "be passed by value" in {
     def modifyValue(value: Int): Int = {
-      value + 5
+      value += 5 // присвоюємо нове значення
+      return value
     }
 
     val original = 5
