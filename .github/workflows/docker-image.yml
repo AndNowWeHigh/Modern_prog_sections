@@ -12,14 +12,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
       - name: Build Docker image
         run: docker build -t pasha .
 
-      - name: Push image to Docker Hub
-        run: docker push pasha
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Run tests in Docker container
-        run: docker run pasha
+      - name: Tag the Docker Image
+        run: docker tag pasha:latest "${{ secrets.DOCKER_USERNAME }}"/tyt:latest
+
+      - name: Push image to Docker Hub
+        run: docker push "${{ secrets.DOCKER_USERNAME }}"/tyt:latest
+
+  test:
+      runs-on: ubuntu-latest
+
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Pull Docker image
+        run: docker pull "${{ secrets.DOCKER_USERNAME }}"/tyt:latest
+
+      - name: Run tests
+        run: docker run "${{ secrets.DOCKER_USERNAME }}"/tyt:latest python test_lab_1.py
