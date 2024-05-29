@@ -2,7 +2,6 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import java.lang.management.ManagementFactory
 
-
 class ScalaBasicsSpec extends AnyFlatSpec with Matchers {
 
   "Reference types" should "be passed by reference" in {
@@ -26,91 +25,60 @@ class ScalaBasicsSpec extends AnyFlatSpec with Matchers {
     val original = 5
     val modified = modifyValue(original)
 
-    modified should be(10)
-
-  }
-  "Original values" should "be correctly checked" in {
-    def modifyValue(value: Int): Int = {
-      value + 5}
-
-    val original = 5
-    val modified = modifyValue(original)
     assert(modified == 10 && original == 5)
-
   }
 
+  "Object creation" should "demonstrate heap allocation" in {
+    class TestClass(var value: Int)
 
-  "MaxHeap" should "change_memory" in {
-      val heap = new MaxHeap()
-      val heap_before = heap.getSize()
-      // Додаємо елементи до купи
-      heap.insert(10)
-      heap.insert(5)
-      heap.insert(15)
-      heap.insert(7)
-      heap.insert(20)
-
-      // Максимальний елемент з купи
-      val heap_after = heap.getSize()
-      // Перевіряємо функціональність
-
-      heap_after should be > heap_before
+    def createObjectsOnHeap(): Array[TestClass] = {
+      Array.fill(100000)(new TestClass(10))
     }
 
-  "Stack" should "change_memory" in {
-    val heap = new MaxHeap()
+    val heapSizeBefore = getHeapSize()
+    val obj = createObjectsOnHeap()
+    System.gc() // Запит на збір сміття, щоб побачити фактичне використання пам'яті
+    Thread.sleep(1000) // Дайте час GC для запуску
+    val heapSizeAfter = getHeapSize()
 
-    // Показуємо, що heap пустий
-    val heap_before = heap.getSize()
-    // Додаємо елементи до heap
-    heap.insert(10)
-    heap.insert(5)
-    heap.insert(12)
-    heap.insert(7)
-    heap.insert(21)
-
-    val heap_after = heap.getSize()
-
-    heap_after should be > heap_before
+    heapSizeAfter should be > heapSizeBefore
   }
-
 
   "Garbage collector" should "collect unreferenced objects" in {
-      class TestClass(var value: Int)
+    class TestClass(var value: Int)
 
-      def createObject(): TestClass = {
-        new TestClass(10)
-      }
-
-      var obj: TestClass = createObject()
-      val heapSizeBeforeGC = getSize()
-      obj = null
-
-      System.gc()  // Request garbage collection
-      Thread.sleep(1000)  // Give the GC some time to run
-
-      val heapSizeAfterGC = getSize()
-
-      heapSizeAfterGC should be < heapSizeBeforeGC
+    def createObject(): TestClass = {
+      new TestClass(10)
     }
 
-    "Stack" should "demonstrate stack allocation" in {
-      def createObjectOnStack(): Int = {
-        val localVariable = 10
-        localVariable
-      }
+    var obj: TestClass = createObject()
+    val heapSizeBeforeGC = getHeapSize()
+    obj = null
 
-      val heapSizeBefore = getSize()
-      val stackAllocatedValue = createObjectOnStack()
-      val heapSizeAfter = getSize()
+    System.gc()  // Запит на збір сміття
+    Thread.sleep(1000)  // Дайте час GC для запуску
 
+    val heapSizeAfterGC = getHeapSize()
 
-      assert(stackAllocatedValue == 10 && heapSizeAfter == heapSizeBefore)
+    heapSizeAfterGC should be < heapSizeBeforeGC
+  }
+
+  "Object creation" should "demonstrate stack allocation" in {
+    def createObjectOnStack(): Int = {
+      val localVariable = 10
+      localVariable
     }
 
-    def getSize(): Long = {
-      val memoryMXBean = ManagementFactory.getMemoryMXBean
-      val heapMemoryUsage = memoryMXBean.getHeapMemoryUsage
-      heapMemoryUsage.getUsed
-    }
+    val heapSizeBefore = getHeapSize()
+    val stackAllocatedValue = createObjectOnStack()
+    val heapSizeAfter = getHeapSize()
+
+    assert(stackAllocatedValue == 10 && heapSizeAfter == heapSizeBefore)
+  }
+
+  def getHeapSize(): Long = {
+    val memoryMXBean = ManagementFactory.getMemoryMXBean
+    val heapMemoryUsage = memoryMXBean.getHeapMemoryUsage
+    heapMemoryUsage.getUsed
+  }
 }
